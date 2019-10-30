@@ -1,0 +1,1 @@
+go get -v "github.com/docker/docker/client"
