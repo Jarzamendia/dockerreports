@@ -15,6 +15,8 @@ func main() {
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 
+	defer cli.Close()
+
 	if err != nil {
 		panic(err)
 	}
@@ -23,12 +25,17 @@ func main() {
 
 	serviceList, _ := cli.ServiceList(ctx, types.ServiceListOptions{})
 
-	fmt.Println("sid, serviceName, CPULimit&RAMLimit, Team")
+	fmt.Println("SID, ServiceName, RAM, CPU, Team, Networks, Constraints")
 
 	for _, service := range serviceList {
 
-		team := "team=null"
-		sid := "null"
+		var sid string
+		var name string
+		var team string
+		var MemoryBytes int64
+		var NanoCPUs int64
+		var Networks []string
+		var Constraints []string
 
 		for _, str := range service.Spec.TaskTemplate.ContainerSpec.Env {
 
@@ -46,7 +53,31 @@ func main() {
 
 		}
 
-		fmt.Println(sid, ",", service.Spec.Name, ",", service.Spec.TaskTemplate.Resources.Limits, ",", team)
+		name = service.Spec.Name
+
+		Constraints = service.Spec.TaskTemplate.Placement.Constraints
+
+		if service.Spec.TaskTemplate.Resources.Limits != nil {
+
+			MemoryBytes = service.Spec.TaskTemplate.Resources.Limits.MemoryBytes
+			NanoCPUs = service.Spec.TaskTemplate.Resources.Limits.NanoCPUs
+
+		} else {
+
+			MemoryBytes = 0
+			NanoCPUs = 0
+
+		}
+
+		for _, net := range service.Spec.TaskTemplate.Networks {
+
+			networkName, _ := cli.NetworkInspect(ctx, net.Target, types.NetworkInspectOptions{})
+
+			Networks = append(Networks, networkName.Name)
+
+		}
+
+		fmt.Println(sid, ",", name, ",", MemoryBytes, ",", NanoCPUs, ",", team, ",", Networks, ",", Constraints)
 
 	}
 
