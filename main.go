@@ -36,6 +36,8 @@ func main() {
 		var NanoCPUs int64
 		var Networks []string
 		var Constraints []string
+		var Repo string
+		var Image string
 
 		for _, str := range service.Spec.TaskTemplate.ContainerSpec.Env {
 
@@ -77,7 +79,10 @@ func main() {
 
 		}
 
-		fmt.Println(sid, ",", name, ",", MemoryBytes, ",", NanoCPUs, ",", team, ",", Networks, ",", Constraints)
+		Repo =  (strings.SplitN(service.Spec.TaskTemplate.ContainerSpec.Image, "/", 2))[0]
+		Image = service.Spec.TaskTemplate.ContainerSpec.Image
+
+		fmt.Println(sid, ",", name, ",", MemoryBytes, ",", NanoCPUs, ",", team, ",", Networks, ",", Constraints, ",", Repo, ",", Image)
 
 	}
 
