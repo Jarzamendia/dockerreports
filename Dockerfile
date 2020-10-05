@@ -1,9 +1,11 @@
-FROM golang:1.12.5 as builder
+FROM golang:1.15.2-alpine3.12 as builder
 
 LABEL maintainer="jearzamendia@gmail.com"
 
 # Set the Current Working Directory inside the container
 WORKDIR /go/src/github.com/jarzamendia/dockerreports
+
+RUN  apk add bash git ca-certificates
 
 COPY get.sh .
 
