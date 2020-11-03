@@ -25,7 +25,7 @@ func main() {
 
 	serviceList, _ := cli.ServiceList(ctx, types.ServiceListOptions{})
 
-	fmt.Println("SID, ServiceName, RAM, CPU, Team, Networks, Constraints")
+	fmt.Println("SID, ServiceName, RAM, CPU, Team, Networks, Constraints, Repo, ImageName")
 
 	for _, service := range serviceList {
 
@@ -79,7 +79,7 @@ func main() {
 
 		}
 
-		Repo =  (strings.SplitN(service.Spec.TaskTemplate.ContainerSpec.Image, "/", 2))[0]
+		Repo = (strings.SplitN(service.Spec.TaskTemplate.ContainerSpec.Image, "/", 2))[0]
 		Image = service.Spec.TaskTemplate.ContainerSpec.Image
 
 		fmt.Println(sid, ",", name, ",", MemoryBytes, ",", NanoCPUs, ",", team, ",", Networks, ",", Constraints, ",", Repo, ",", Image)
